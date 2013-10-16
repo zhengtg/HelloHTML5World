@@ -38,6 +38,10 @@ ps.decodePos = function(pos){
         r:pos%100};
 };
 
+ps.getScoreByIndex = function(index){
+    return 5*(2*index-1);
+}
+
 ps.inArray = function(needle,array,isKey){
 	if(typeof(needle)=="string" || typeof(needle)=="number"){
 		for(var i in array){    

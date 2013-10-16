@@ -63,7 +63,21 @@ var PopStartLayer = cc.LayerGradient.extend({
             item.runAction(cc.MoveBy.create(ps.moveTime,cc.p(-count*this.cellSize.width,0)));
         }
     },
-
+    scoreAction:function(item,score){
+        if (score > 0 ){
+            /*
+            var label = cc.LabelTTF.create(score+"",'Times New Roman',32, cc.size(0,0),
+                cc.TEXT_ALIGNMENT_CENTER,cc.VERTICAL_TEXT_ALIGNMENT_CENTER);
+            var moveUp = cc.MoveBy.create(1.0,cc.p(0,this.cellSize.height));
+            var moveToScore = cc.MoveTo.create(1.0,cc.p(100,director.getVisibleSize().height - 100));
+            var scaleTo = cc.ScaleTo.create(1.0,0.2);
+            var fadeOut = cc.FadeOut.create();
+            label.runAction(cc.Sequence.create(moveUp,cc.Spawn.create(moveToScore,scaleTo,fadeOut)));
+            var pos = item.getParent().convertToWorldSpace(item.getPosition());
+            director.getRunningScene().addChild(label);
+            label.setPosition(pos); */
+        }
+    },
     onMenuCallback:function (sender) {
         var pos = sender.getPosition();
         var p = {c:Math.floor(pos.x/this.cellSize.width+0.5),r:Math.floor(pos.y/this.cellSize.height+0.5)};
@@ -114,11 +128,13 @@ var PopStartLayer = cc.LayerGradient.extend({
         console.log("leftStars",leftStars);
         console.log("updateStars ",updateStars);
 
-        //move stars
+        //remove stars
         for (var i=0;i<removeStars.length;i++){
             var p = removeStars[i];
             //console.log("remove c,r", p.c, p.r);
             var item = this.psData[p.c][p.r];
+            this.scoreAction(item,ps.getScoreByIndex(i+1));
+            console.log("i,score",i+1,ps.getScoreByIndex(i+1));
             this.sMenu.removeChild(item,true); //add action 1s
             this.psData[p.c].splice(p.r,1);
         }
