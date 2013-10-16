@@ -12,14 +12,14 @@ ps.starType3 = 3;
 ps.starType4 = 4;
 ps.starTypeNone = 5;
 
-ps.moveTime = 0.5;
+ps.moveTime = 0.3;
 
 //创建一组数据
 ps.newPSData = function(){
-    var data = new Array();
+    var data = [];
 
     for (var i = 0; i < ps.columns; i++){
-        var column = new Array();
+        var column = [];
         for (var j = 0; j < ps.rows; j++){
             column.push((Math.floor(Math.random()*10))%ps.starTypeNone);
         }
@@ -38,15 +38,31 @@ ps.decodePos = function(pos){
         r:pos%100};
 };
 
+ps.inArray = function(needle,array,isKey){
+	if(typeof(needle)=="string" || typeof(needle)=="number"){
+		for(var i in array){    
+			if(needle == array[i]){
+				if(isKey){
+					return i;    
+				}    
+				return true;    
+			}    
+		}    
+		return false;    
+	}  
+}
+
+
+//data: menu item array
 ps.findConnectStar = function(data,c,r,array,sType){
     // Check for bounds
-    if (c < 0 || c >= ps.columns) return;
-    if (r < 0 || r >= ps.rows) return;
+    if (c < 0 || c >= data.length) return;
+    if (r < 0 || r >= data[c].length) return;
+
+    // Make sure that the star type match
+    if (data[c][r].starType != sType) return;
 
     var tag = ps.encodePos(c,r);
-    // Make sure that the star type match
-    if (data[c][r] != sType) return;
-
     // Check if idx is already visited
     for (var i = 0; i < array.length; i++)
     {
@@ -65,15 +81,15 @@ ps.findConnectStar = function(data,c,r,array,sType){
 
 // remove selected stars, and return updated star info
 // return two array
+// data: menu item array
 // downStars: the down stars of column,such as,{2:[{r=3,down=1},{r=4,down=1},{r=6,down=2}]}
 // leftStars: the move left stars of column,such as,[{c=3,left=1},{c=4,left=1},{c=6,left=2}]
-ps.removeStars = function(data,selected){
+ps.updateStars = function(data,selected){
     var markStars = [];
     //mark all remove stars
     for (var i=0;i<selected.length;i++){
         var p = ps.decodePos(selected[i]);
-      //  data[p.c].splice(p.r,1);
-        data[p.c][p.r] = ps.starTypeNone;
+        data[p.c][p.r].starType = ps.starTypeNone;
         if (markStars[p.c] == null ){
             markStars[p.c] = [p.r];
         }else{
@@ -86,21 +102,17 @@ ps.removeStars = function(data,selected){
     //return markStars;
     var startColumn = -1;
     for (var i in markStars){
-        console.log("column",i,markStars[i])
+        //console.log("column",i,markStars[i]);
         if (startColumn == -1){
             startColumn = i;
         }
         var down = 0;
         downStars[i] = [];
-        for (var j = markStars[i][0]; j < ps.rows;j++ ){
-            if (data[i][j] == null){
-                break;
-            }
-
-            if (data[i][j] == ps.starTypeNone ){
+        for (var j = markStars[i][0]; j < data[i].length;j++ ){
+            if (data[i][j].starType == ps.starTypeNone ){
                 down += 1;
             }else{
-                downStars[i].push({r:j,down:down});
+                downStars[i].push({item:data[i][j],down:down});
             }
         }
     }
@@ -108,32 +120,41 @@ ps.removeStars = function(data,selected){
     // get update stars with left info
     var leftStars = [];
     var left = 0;
-    for (var i = startColumn; i < ps.rows;i++ ){
+    for (var i = startColumn; i < data.length;i++ ){
         if (markStars[i] != null && markStars[i][0] == 0 && downStars[i].length == 0 ){
             //clear column
             left += 1;
         }else if(left > 0){
-            leftStars.push({c:i,left:left});
+            for (var j in data[i]){
+                var item = data[i][j];
+               if (item.starType != ps.starTypeNone ){
+                   leftStars.push({item:item,left:left});
+               }
+            }
         }
     }
 
     // remove stars
+    var removeStars = [];
     for (var i in markStars){
-        for (var j in markStars[i]){
-            data[i].splice(j,1);
+        for (var j = markStars[i].length-1; j>=0; j--){
+            removeStars.push({c:i,r:markStars[i][j]});
         }
     }
 
-    return {downStars:downStars,leftStars:leftStars};
-}
+    return {removeStars:removeStars,downStars:downStars,leftStars:leftStars};
+};
 
-/*
-var testData = ps.newPSData();
-for (var i in testData)
-{
-    for (var j in testData[i])
-    {
-        console.log("testData:",i,j,testData[i][j]);
+ps.checkStars = function(data){
+    for (var i = 0; i < data.length; i++){
+        for (var j =0; j < data[i].length; j++){
+            var connected = [];
+            ps.findConnectStar(data,i,j,connected,data[i][j].starType);
+            if (connected.length >=2 ){
+                return true;
+            }
+        }
     }
-}
-*/
+    return false;
+};
+
