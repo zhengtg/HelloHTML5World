@@ -32,13 +32,6 @@ var PopStartLayer = cc.LayerGradient.extend({
                 var item = cc.MenuItemLabel.create(label,this.onMenuCallback,this);
                 item.setTag(ps.encodePos(i,j));
 
-                //test
-                var label = cc.LabelTTF.create(item.getTag()+"",'Times New Roman',18, cc.size(sWidth,sHeight),
-                    cc.TEXT_ALIGNMENT_CENTER,cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM);
-                item.addChild(label);
-                label.setPosition(cc.p(sWidth/2,sHeight/2));
-                label.setColor(cc.c3(255,0,0));
-
                 this.sMenu.addChild(item);
                 item.setAnchorPoint(cc.p(0,0));
                 item.setPosition(pos);
@@ -65,17 +58,18 @@ var PopStartLayer = cc.LayerGradient.extend({
     },
     scoreAction:function(item,score){
         if (score > 0 ){
-            /*
-            var label = cc.LabelTTF.create(score+"",'Times New Roman',32, cc.size(0,0),
-                cc.TEXT_ALIGNMENT_CENTER,cc.VERTICAL_TEXT_ALIGNMENT_CENTER);
+            var label = cc.LabelTTF.create(score+"",'Times New Roman',32)
+
             var moveUp = cc.MoveBy.create(1.0,cc.p(0,this.cellSize.height));
-            var moveToScore = cc.MoveTo.create(1.0,cc.p(100,director.getVisibleSize().height - 100));
+            var moveToScore = cc.MoveTo.create(1.0,cc.p(100,cc.Director.getInstance().getVisibleSize().height - 100));
             var scaleTo = cc.ScaleTo.create(1.0,0.2);
-            var fadeOut = cc.FadeOut.create();
-            label.runAction(cc.Sequence.create(moveUp,cc.Spawn.create(moveToScore,scaleTo,fadeOut)));
+            var fadeOut = cc.FadeOut.create(1.0);
+            var removeSelf = cc.CallFunc.create(function(){label.removeFromParent(true);});
+            label.runAction(cc.Sequence.create([moveUp,cc.Spawn.create(moveToScore,scaleTo,fadeOut),removeSelf]));
             var pos = item.getParent().convertToWorldSpace(item.getPosition());
-            director.getRunningScene().addChild(label);
-            label.setPosition(pos); */
+            pos = cc.pAdd(pos,cc.p(this.cellSize.width/2,this.cellSize.height*2));
+            cc.Director.getInstance().getRunningScene().addChild(label);
+            label.setPosition(pos);
         }
     },
     onMenuCallback:function (sender) {
