@@ -74,6 +74,7 @@ var Helloworld = cc.Layer.extend({
         this.addChild(menu, 1);
         closeItem.setPosition(cc.p(size.width - 20, 20));
 
+        /*
         /////////////////////////////
         // 3. add your codes below...
         // add a label shows "Hello World"
@@ -86,7 +87,7 @@ var Helloworld = cc.Layer.extend({
 
         var lazyLayer = cc.LayerColor.create(cc.c4(127,127,127,255));
         this.addChild(lazyLayer);
-     /*
+
         // add "HelloWorld" splash screen"
         this.sprite = cc.Sprite.create("res/HelloWorld.png");
         this.sprite.setPosition(cc.p(size.width / 2, size.height / 2));
@@ -99,11 +100,6 @@ var Helloworld = cc.Layer.extend({
         var scaleToA = cc.ScaleTo.create(2, 1, 1);
 
         this.sprite.runAction(cc.Sequence.create(rotateToA, scaleToA));
-*/
-        // add popstar layer
-        this.popStarLayer = new PopStartLayer();
-        this.addChild(this.popStarLayer);
-        this.popStarLayer.setAnchorPoint(cc.p(0,0));
 
         this.circle = new CircleSprite();
         this.circle.setPosition(cc.p(40, size.height - 60));
@@ -111,6 +107,12 @@ var Helloworld = cc.Layer.extend({
         this.circle.schedule(this.circle.myUpdate, 1 / 60);
 
         this.helloLabel.runAction(cc.Spawn.create(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)),cc.TintTo.create(2.5,255,125,0)));
+         */
+
+        // add popstar layer
+        this.popStarLayer = new PopStartLayer();
+        this.addChild(this.popStarLayer);
+        this.popStarLayer.setAnchorPoint(cc.p(0,0));
 
         this.setTouchEnabled(true);
         return true;
